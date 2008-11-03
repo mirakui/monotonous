@@ -1,6 +1,6 @@
+#!/usr/bin/ruby
 require 'rubygems'
 require 'time'
-#require 'twitter4r'
 require 'pit'
 require 'net/http'
 require 'logger'
