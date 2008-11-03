@@ -42,7 +42,7 @@ http = Net::HTTP.new(FAVOTTER_DOMAIN)
 res = http.get(QUERY)
 
 status = res.code
-status_old = File.exist?(LOG_FILE) ? open(LOG_FILE, 'r').read.chomp : nil
+status_old = File.exist?(STATUS_FILE) ? open(STATUS_FILE, 'r').read.chomp : nil
 changed = (status!=status_old)
 
 $log.debug res.code
@@ -54,6 +54,6 @@ if changed
   end
 end
 
-open(LOG_FILE, 'w').write(status)
+open(STATUS_FILE, 'w').write(status)
 
 
