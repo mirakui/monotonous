@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -d
+#!/usr/bin/ruby
 require 'rubygems'
 require 'time'
 require 'pit'
@@ -8,30 +8,37 @@ require 'pp'
 require 'optparse'
 require 'gena/file_util'
 
-$target_file   = Gena::FileUtil.new 'tmp/target',   :base=>__FILE__
-$since_id_file = Gena::FileUtil.new 'tmp/since_id', :base=>__FILE__
+$target_file   = Gena::FileUtil.new 'tmp/target',        :base=>__FILE__
+$since_id_file = Gena::FileUtil.new 'tmp/since_id',      :base=>__FILE__
 
-$log = Logger.new(STDOUT)
-$log.level = Logger::DEBUG
+$log = Logger.new(File.dirname(__FILE__)+'/log/doppelkun.log', 'monthly')
+$log.level = $DEBUG ? Logger::DEBUG : Logger::INFO
 
-$target_user = 'mirakui'
-
-def retarget(tw)
+def retarget(tw, target=nil)
   $log.info('begin retarget')
 
-  friends = tw.my(:followers).map {|f| f.screen_name}
-  $log.debug "followers=(#{friends.length})#{friends.join ','}"
+  target_old = $target_file.read
+  $log.debug "target_old=#{target_old}"
 
-  target = friends[rand friends.length]
+  if target.nil?
+    friends = tw.my(:followers).map {|f| f.screen_name}
+    $log.debug "followers=(#{friends.length})#{friends.join ','}"
+
+    target = friends[rand friends.length]
+  end
   $log.debug "target=#{target}"
 
   $target_file.write target
-  $log.info "target wrote"
+  $log.info "target wrote: #{target}"
 
-  if $since_id_file.exist?
-    $since_id_file.delete 
-    $log.info "since_id deleted"
-  end
+  since_id = tw.timeline_for(:user, :id=>target).first.id
+
+  $since_id_file.write since_id
+  $log.info "wrote since_id #{since_id}"
+
+  tw.status :post, "@#{target_old} -> @#{target}"
+  $log.info "retarget @#{target_old} -> @#{target}"
+
   $log.info 'end retarget'
 
   target
@@ -53,18 +60,15 @@ def mirror_post(tw)
   $log.debug "timeline.length=#{timeline.length}"
 
   unless timeline.empty?
-    last_id = timeline.last.id
-    $log.debug "last_id=#{last_id}"
-
     timeline.each do |t|
       st = t.text
-      tw.status :post, text
-      $log.debug "poted='#{text}"
+      last_id = t.id
+      tw.status :post, t.text
+      $log.debug "poted='#{t.text}"
+      $since_id_file.write last_id
+      $log.info "wrote since_id #{last_id}"
     end
     $log.info "posted #{timeline.length} statuses"
-
-    $since_id_file.write last_id
-    $log.info "wrote last_id #{last_id}"
   else
     $log.info "no statuses to mirror"
   end
@@ -83,5 +87,7 @@ begin
 
   tw = Twitter::Client.new pit
 
-  task=='retarget' ? retarget(tw) : mirror_post(tw)
+  task=='retarget' ? retarget(tw, ARGV.shift) : mirror_post(tw)
 end
+
+__END__
