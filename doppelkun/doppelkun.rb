@@ -61,7 +61,6 @@ def mirror_post(tw)
 
   unless timeline.empty?
     timeline.each do |t|
-      st = t.text
       last_id = t.id
       tw.status :post, t.text
       $log.debug "poted='#{t.text}"
