@@ -6,10 +6,10 @@ require 'logger'
 require 'twitter'
 require 'pp'
 require 'optparse'
-require 'gena/file_util'
+require 'gena/file_db'
 
-$target_file   = Gena::FileUtil.new 'tmp/target',        :base=>__FILE__
-$since_id_file = Gena::FileUtil.new 'tmp/since_id',      :base=>__FILE__
+$target_file   = Gena::FileDB.new 'tmp/target',        :base=>__FILE__
+$since_id_file = Gena::FileDB.new 'tmp/since_id',      :base=>__FILE__
 
 $log = Logger.new(File.dirname(__FILE__)+'/log/doppelkun.log', 'monthly')
 $log.level = $DEBUG ? Logger::DEBUG : Logger::INFO
@@ -87,6 +87,8 @@ begin
   tw = Twitter::Client.new pit
 
   task=='retarget' ? retarget(tw, ARGV.shift) : mirror_post(tw)
+rescue => e
+  $log.fatal "#{e.class}:#{e.to_str} -- #{e.backtrace}"
 end
 
 __END__
