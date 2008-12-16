@@ -5,6 +5,8 @@ require 'pit'
 require 'net/http'
 require 'logger'
 require 'twitter'
+require 'pp'
+require 'pathname'
 
 FAVOTTER_DOMAIN = 'favotter.matope.com'
 QUERY = '/rss.php?mode=new'
