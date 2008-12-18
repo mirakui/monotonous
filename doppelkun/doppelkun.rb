@@ -7,11 +7,12 @@ require 'twitter'
 require 'pp'
 require 'optparse'
 require 'gena/file_db'
+require 'uri'
 
 $target_file   = Gena::FileDB.new 'tmp/target',        :base=>__FILE__
 $since_id_file = Gena::FileDB.new 'tmp/since_id',      :base=>__FILE__
 
-$log = Logger.new(File.dirname(__FILE__)+'/log/doppelkun.log', 'monthly')
+$log = Logger.new(File.dirname(__FILE__)+'/log/doppelkun.log', 'daily')
 $log.level = $DEBUG ? Logger::DEBUG : Logger::INFO
 
 def retarget(tw, target=nil)
@@ -36,7 +37,8 @@ def retarget(tw, target=nil)
   $since_id_file.write since_id
   $log.info "wrote since_id #{since_id}"
 
-  tw.status :post, "@#{target_old} -> @#{target}"
+  #tw.status :post, ". @#{target_old} -> @#{target}"
+  tw.status :post, ". @#{target_old} -> ?"
   $log.info "retarget @#{target_old} -> @#{target}"
 
   $log.info 'end retarget'
@@ -62,7 +64,7 @@ def mirror_post(tw)
   unless timeline.empty?
     timeline.each do |t|
       last_id = t.id
-      tw.status :post, t.text
+      tw.status :post, URI.escape(t.text, /[ -_.!~*'();\/?:@&=+$,\[\]]/)
       $log.debug "poted='#{t.text}"
       $since_id_file.write last_id
       $log.info "wrote since_id #{last_id}"
@@ -79,7 +81,7 @@ begin
   task  = ARGV.shift
 
   pit = Pit.get(
-    $DEBUG ? 'doppelkun_debug' : 'doppelkun',
+    ($DEBUG ? 'doppelkun_debug' : 'doppelkun'),
     :require=>{'login'=>'','password'=>''}
   )
   $log.debug "pit loaded #{pit['login']}"
