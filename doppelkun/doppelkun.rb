@@ -1,4 +1,5 @@
 #!/usr/bin/ruby
+BASE_DIR = File.dirname(__FILE__)
 require 'rubygems'
 require 'time'
 require 'pit'
@@ -6,13 +7,13 @@ require 'logger'
 require 'twitter'
 require 'pp'
 require 'optparse'
-require 'gena/file_db'
 require 'uri'
+require File.join BASE_DIR, 'lib/file_db'
 
 $target_file   = Gena::FileDB.new 'tmp/target',        :base=>__FILE__
 $since_id_file = Gena::FileDB.new 'tmp/since_id',      :base=>__FILE__
 
-$log = Logger.new(File.dirname(__FILE__)+'/log/doppelkun.log', 'daily')
+$log = Logger.new(File.join(BASE_DIR, 'log', 'doppelkun.log'), 'daily')
 $log.level = $DEBUG ? Logger::DEBUG : Logger::INFO
 
 def retarget(tw, target=nil)
