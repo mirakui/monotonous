@@ -64,7 +64,7 @@ def mirror_post(tw)
   unless timeline.empty?
     timeline.each do |t|
       last_id = t.id
-      tw.status :post, URI.escape(t.text, /[ -_.!~*'();\/?:@&=+$,\[\]]/)
+      tw.status :post, URI.escape(t.text, /[&]/)
       $log.debug "poted='#{t.text}"
       $since_id_file.write last_id
       $log.info "wrote since_id #{last_id}"
@@ -90,7 +90,7 @@ begin
 
   task=='retarget' ? retarget(tw, ARGV.shift) : mirror_post(tw)
 rescue => e
-  $log.fatal "#{e.class}:#{e.to_str} -- #{e.backtrace}"
+  $log.error "#{e.class}:#{e.to_str} -- #{e.backtrace}"
 end
 
 __END__
