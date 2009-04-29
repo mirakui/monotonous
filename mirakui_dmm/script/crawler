@@ -1,0 +1,8 @@
+#!/usr/bin/ruby -Ku
+$: << File.join(File.dirname(__FILE__), '..', 'lib')
+require 'crawler'
+
+$PROGRAM_NAME = 'mirakui_dmm-crawler'
+c = MirakuiDMM::Crawler.new
+c.start_crawl
+
