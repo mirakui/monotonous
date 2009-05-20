@@ -1,6 +1,3 @@
-BASE_DIR = File.join File.dirname(__FILE__), '../'
-$: << BASE_DIR
-
 require 'lib/imap_fetcher'
 require 'lib/mirakui_dmm_base'
 
@@ -11,7 +8,7 @@ module MirakuiDmm
     def initialize
     end
 
-    def execute
+    def execute(options)
       mails = fetch_mail
       mails.each do |mail|
         from = mail[:header][/^Subject:.*$/]

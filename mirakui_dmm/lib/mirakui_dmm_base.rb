@@ -3,7 +3,10 @@ require 'time'
 require 'loggable'
 
 module MirakuiDmm
-  class MirakuiDmmBase < Gena::Loggable
+  class MirakuiDmmBase
+
+    include Gena::Loggable
+
     def initialize
     end
 

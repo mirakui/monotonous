@@ -5,7 +5,9 @@ require 'pit'
 require 'loggable'
 
 module Gena
-  class ImapFetcher < Loggable
+  class ImapFetcher
+
+    include Loggable
 
     def initialize(pit_name)
       @pit = Pit.get(
