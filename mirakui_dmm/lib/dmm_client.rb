@@ -24,12 +24,6 @@ module MirakuiDmm
     def initialize
       @agent = WWW::Mechanize.new
       @agent.set_hook
-      @dmm_base = 'http://www.dmm.com/'
-    end
-
-    def test
-      pp search('蒼井そら')
-      #p search('asdf')
     end
 
     def search(query)
@@ -45,11 +39,11 @@ module MirakuiDmm
       searchstr = page.uri.to_s[%r(/searchstr=.*?/)]
       result = []
       [false, true].each do |is_adult|
-        textlist_uri_str = "#{dmm_base(is_adult)}rental/-/list/=/article=search/#{searchstr}view=text/sort=review_rank/"
+        textlist_uri_str = "#{dmm_base(is_adult)}/rental/-/list/=/article=search/#{searchstr}view=text/sort=review_rank/"
         get textlist_uri_str
         page.links_with(:href=>%r(/rental/-/detail/=/)).each do |link|
           result << {
-            :uri      => link.href,
+            :uri      => dmm_base(is_adult)+link.href,
             :title    => link.text,
             :is_adult => is_adult
           }
@@ -61,7 +55,7 @@ module MirakuiDmm
     end
 
     def dmm_base(is_adult=false)
-      is_adult ? 'http://www.dmm.co.jp/' : 'http://www.dmm.com/'
+      is_adult ? 'http://www.dmm.co.jp' : 'http://www.dmm.com'
     end
 
     private
@@ -92,7 +86,9 @@ module MirakuiDmm
   end
 end
 
-#__END__
-dmm = MirakuiDmm::DmmClient.new
-dmm.test
+__END__
+#dmm = MirakuiDmm::DmmClient.new
+#a = dmm.search('これがS級素人だ！！ 大ヒット記念 完全保存版BEST')
+a = MirakuiDmm::DmmClient.search('これがS級素人だ！！ 大ヒット記念 完全保存版BEST')
+p a
 
