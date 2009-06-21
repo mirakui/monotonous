@@ -18,15 +18,15 @@ class MirakuiMetro < Gena::TwitterBotBase
 
   def run
     last_id = Var[:last_id] || 0
-    from    = SCHEDULE_OFFSET - ($DEBUG ? 1.days : 30.minutes)
+    from    = SCHEDULE_OFFSET - ($DEBUG ? 1.days : 300.minutes)
     to      = SCHEDULE_OFFSET
     logger.debug "last_id=#{last_id.inspect},from=#{from},to=#{to}"
 
     schedules = Schedule.find(:all,
       :conditions => [
-        "id < :last_id AND posted_at > :from AND posted_at <= :to",
+        "status_id > :last_id AND posted_at > :from AND posted_at <= :to",
         { :last_id => last_id, :from => from, :to => to } ],
-      :order => 'id DESC'
+      :order => 'status_id DESC'
     )
 
     logger.debug "matched #{schedules.count} statuses"
