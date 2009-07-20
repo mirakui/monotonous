@@ -19,7 +19,7 @@ MSG_FILE = {
 LOG_FILE = BASE_PATH + '/log/favotter503.log'
 LOG_LEVEL = Logger::DEBUG
 
-$log = Logger.new(LOG_FILE, 'monthly')
+$log = Logger.new(LOG_FILE, 'daily')
 $log.level = LOG_LEVEL
 pit = Pit.get('favotter503', :require=>{
   'login' => 'favotter503',
@@ -45,7 +45,7 @@ res = http.get(QUERY)
 
 status = res.code
 status_old = File.exist?(STATUS_FILE) ? open(STATUS_FILE, 'r').read.chomp : nil
-changed = (status!=status_old)
+changed = (status[0]!=status_old[0])
 
 $log.debug res.code
 if changed
