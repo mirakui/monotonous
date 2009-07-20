@@ -1,0 +1,56 @@
+#!/opt/local/bin/ruby1.9 -Ku
+
+BASE_DIR = File.join File.dirname(__FILE__), '..'
+LIB_DIR  = File.join BASE_DIR, 'lib'
+$:.concat [LIB_DIR]
+
+require 'rubygems'
+require 'loggable'
+require 'twitter_bot_base'
+require 'hpricot'
+require 'open-uri'
+require 'pit'
+require 'kconv'
+
+$pit = Pit.get(($DEBUG ? 'blogwrote_debug' : 'blogwrote'), :require => {
+  'login' => 'mirakui',
+  'password' => ''
+})
+
+BLOG_RSS_URI = 'http://d.hatena.ne.jp/mirakui/rss'
+
+class BlogWrote < Gena::TwitterBotBase
+  def initialize
+    super $pit
+    self.logger = Logger.new(STDOUT)
+    logger.level = $DEBUG ? Logger::DEBUG : Logger::INFO
+  end
+
+  def run
+    logger.info 'started running'
+    h = Hpricot(URI.parse(BLOG_RSS_URI).read)
+    uri = (h / 'rdf:li')[0].attributes['rdf:resource']
+    title = (h / 'title')[1].inner_text.toutf8.strip
+    puts 'uri   = '+uri.inspect
+    puts 'title = '+title.inspect
+    loop {
+      print 'Do you wanna post?[y/n] '
+      case gets.chomp
+      when 'y'
+        str = "ブログ書いた「#{title}」#{uri}"
+        post str
+        logger.info "posted '#{str}'"
+        break
+      when 'n'
+        logger.info "aborted"
+        break
+      end
+    }
+    
+    logger.info 'finished running'
+  end
+end
+
+b = BlogWrote.new
+b.run
+
