@@ -1,0 +1,48 @@
+#!/usr/bin/ruby
+$KCODE = 'UTF8'
+
+BASE_DIR = File.join(File.dirname(__FILE__), '..')
+$: << BASE_DIR
+$: << File.join(BASE_DIR, 'lib')
+
+require 'lib/loggable'
+
+include Gena::Loggable
+
+class String
+  def camelize
+    self.scan(/[^_]+/).map{|w|w.capitalize}.join
+  end
+end
+
+def usage
+  puts "usage: $0 <plugin_name> [options...]"
+  exit 1
+end
+
+begin
+
+  if ARGV.length<1
+    logger.error "few argumets"
+    usage
+  end
+
+  plugin_name = ARGV.shift
+  logger.debug "plugin_name = #{plugin_name.inspect}"
+  plugin_path = File.join BASE_DIR, 'plugin', "#{plugin_name}_plugin.rb"
+  logger.debug "plugin_path = #{plugin_path.inspect}"
+
+  require plugin_path
+
+  plugin_class_name = "MirakuiDmm::"+"#{plugin_name}_plugin".camelize
+  logger.debug "plugin_class_name = #{plugin_class_name.inspect}"
+
+  plugin_instance = instance_eval "#{plugin_class_name}.new"
+  plugin_instance.execute(ARGV)
+
+rescue Object => e
+
+  logger.error "#{e.class}:#{e.to_str} -- #{e.backtrace}"
+
+end
+

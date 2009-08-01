@@ -1,13 +1,20 @@
+$: << File.dirname(__FILE__)
 require 'twitter'
 require 'time'
 require 'loggable'
 
-module MirakuiDmm
-  class MirakuiDmmBase
+module Gena
+  class TwitterBotException < Exception
+  end
 
-    include Gena::Loggable
+  class TwitterBotInvalidPit < TwitterBotException
+  end
 
-    def initialize
+  class TwitterBotBase < Gena::Loggable
+    attr_reader :pit
+
+    def initialize(pit)
+      @pit = pit
     end
 
     protected
@@ -19,10 +26,7 @@ module MirakuiDmm
     private
     def twitter
       unless defined? @twitter
-        pit = Pit.get(
-          ($DEBUG ? 'mirakui_dmm_twitter_debug' : 'mirakui_dmm_twitter'),
-          :require=>{'login'=>'','password'=>''}
-        )
+        raise TwitterBotInvalidPit.new(pit.inspect) unless pit.key?('login') && pit.key?('password')
         logger.debug "pit loaded #{pit['login']}"
 
         @twitter = Twitter::Client.new pit
@@ -31,4 +35,5 @@ module MirakuiDmm
     end
   end
 end
+
 

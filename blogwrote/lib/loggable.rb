@@ -2,7 +2,7 @@ require 'logger'
 
 module Gena
 
-  module Loggable
+  class Loggable
 
     def logger
       unless defined? @logger
