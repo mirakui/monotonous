@@ -70,8 +70,10 @@ def mirror_post(tw)
   unless timeline.empty?
     timeline.each do |t|
       last_id = t.id
-      tw.status :post, URI.escape(t.text, /[&]/)
-      $log.debug "poted='#{t.text}"
+      #text = URI.escape(t.text.delete('@'), /[&]/)
+      text = t.text
+      tw.status :post, text
+      $log.debug "poted='#{text}"
       $since_id_file.write last_id
       $log.info "wrote since_id #{last_id}"
     end
@@ -161,7 +163,7 @@ begin
   else
     mirror_post(tw)
   end
-rescue => e
+rescue Object => e
   $log.error "#{e.class}:#{e.to_str} -- #{e.backtrace}"
 end
 

@@ -12,6 +12,8 @@ class MirakuiMetro < Gena::TwitterBotBase
     super $pit
     log_path = File.join(BASE_DIR, 'log', 'mirakui_retro.log')
     self.logger = Logger.new(log_path, 'daily') unless $DEBUG
+    logger.formatter = Logger::Formatter.new # for active_support/core_ext/logger
+                                             # http://api.rubyonrails.org/classes/Logger.html
     # logger.level = $DEBUG ? Logger::DEBUG : Logger::INFO
     logger.level = Logger::DEBUG
   end
@@ -26,7 +28,7 @@ class MirakuiMetro < Gena::TwitterBotBase
       :conditions => [
         "status_id > :last_id AND posted_at > :from AND posted_at <= :to",
         { :last_id => last_id, :from => from, :to => to } ],
-      :order => 'status_id DESC'
+      :order => 'status_id'
     )
 
     logger.debug "matched #{schedules.count} statuses"

@@ -7,6 +7,7 @@ module Gena
     def logger
       unless defined? @logger
         @logger = Logger.new(STDOUT)
+        @logger.formatter = Logger::Formatter.new
         @logger.level = Logger::DEBUG
       end
       @logger
