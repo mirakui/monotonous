@@ -1,0 +1,13 @@
+#!/usr/local/bin/ruby1.9
+$: << File.join(File.dirname(__FILE__), '..')
+
+require 'rubygems'
+require 'lib/tsuyabu_ops'
+
+begin
+  ops = TsuyabuOps.new
+  ops.run
+rescue Object => e
+  ops.logger.error ([e.to_s] + e.backtrace).join("\n\t")
+end
+

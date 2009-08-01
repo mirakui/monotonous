@@ -19,7 +19,6 @@ module Gena
       @pit = pit
     end
 
-    protected
     def post(msg)
       twitter.status :post, msg
       logger.info "posted to twitter: #{msg}"

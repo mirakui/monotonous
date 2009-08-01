@@ -1,0 +1,19 @@
+#!/usr/local/bin/ruby1.9
+
+$: << File.join(File.dirname(__FILE__), '..')
+require 'rubygems'
+require 'pit'
+require 'lib/tsuyabu_ops'
+
+begin
+  ops = TsuyabuOps.new
+  status = ARGV.shift
+  if status.nil? || status.empty?
+    status = gets
+  end
+  ops.add_queue status
+  #ops.post status
+rescue Object => e
+  ops.logger.error ([e.to_s] + e.backtrace).join("\n\t")
+end
+
