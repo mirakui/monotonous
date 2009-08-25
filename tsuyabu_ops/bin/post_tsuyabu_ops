@@ -1,9 +1,9 @@
 #!/usr/local/bin/ruby1.9
 
-$: << File.join(File.dirname(__FILE__), '..')
+$: << File.join(File.dirname(__FILE__), '..', 'lib')
 require 'rubygems'
 require 'pit'
-require 'lib/tsuyabu_ops'
+require 'tsuyabu_ops.rb'
 
 begin
   ops = TsuyabuOps.new
