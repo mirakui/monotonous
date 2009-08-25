@@ -16,7 +16,7 @@ class TsuyabuOps < Gena::TwitterBotBase
   QUEUE_MAX = 5
 
   def initialize
-    self.logger = Logger.new File.join(LOG_DIR, 'tsuyabu_ops.log') unless $DEBUG
+    self.logger = Logger.new(File.join(LOG_DIR, 'tsuyabu_ops.log'), 'daily') unless $DEBUG
     logger.level = $DEBUG ? Logger::DEBUG : Logger::INFO
     pit = Pit.get(($DEBUG ? 'tsuyabu_ops_debug' : 'tsuyabu_ops'), :require => {
       'login' => '',
