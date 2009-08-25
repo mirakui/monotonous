@@ -1,0 +1,53 @@
+#!/usr/local/bin/ruby1.9
+# vim:fileencoding=utf-8
+BASE_DIR = File.join(File.dirname(__FILE__), '..')
+$: << BASE_DIR
+
+require 'lib/loggable'
+require 'digest/sha1'
+require 'pstore'
+
+QUEUE_DIR = '/var/tsuyabu_ops/queue/'
+
+TARGET_FILES = [
+  {:name => 'doppelkun',         :path => '/home/mirakui/projects/monotonous/doppelkun/log/doppelkun.log'},
+  {:name => 'favotter503',       :path => '/home/mirakui/projects/monotonous/favotter503/log/favotter503.log'},
+  {:name => 'fxd',               :path => '/home/mirakui/projects/fx/log/fxd.log'},
+  {:name => 'follotter-crawler', :path => '/home/mirakui/projects/follotter/follotter-crawler/log/crawler.log'},
+]
+
+MESSAGE_FORMATS = [
+  "@mirakui %sがエラー吐いとる",
+  "@mirakui %sがエラーです",
+  "@mirakui %sがなんかアレです",
+  "@mirakui %sなんとかしろ",
+  "@mirakui %sのエラーです",
+  "@mirakui %sさん。。。",
+]
+
+
+def check
+  ps = PStore.new(File.join(BASE_DIR, 'log/check_error.ps'))
+  ps.transaction do
+    TARGET_FILES.each do |file|
+      grep = `/bin/grep ERROR #{file[:path]} | tail -1 2> /dev/null`
+      grep_sha1 = Digest::SHA1.hexdigest(grep)
+      name = file[:name]
+      unless ps[name] == grep_sha1
+        ps[name] = grep_sha1
+        post(msg(name))
+      end
+    end
+  end
+end
+
+def msg(name)
+  MESSAGE_FORMATS[(MESSAGE_FORMATS.length * rand).floor] % name
+end
+
+def post(msg)
+  `#{File.join(BASE_DIR, 'bin', 'post_tsuyabu_ops')} '#{msg}'`
+end
+
+check
+
