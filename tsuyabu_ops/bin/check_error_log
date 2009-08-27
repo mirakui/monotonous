@@ -13,7 +13,7 @@ TARGET_FILES = [
   {:name => 'doppelkun',         :path => '/home/mirakui/projects/monotonous/doppelkun/log/doppelkun.log'},
   {:name => 'favotter503',       :path => '/home/mirakui/projects/monotonous/favotter503/log/favotter503.log'},
   {:name => 'fxd',               :path => '/home/mirakui/projects/fx/log/fxd.log'},
-  {:name => 'follotter-crawler', :path => '/home/mirakui/projects/follotter/follotter-crawler/log/crawler.log'},
+  #{:name => 'follotter-crawler', :path => '/home/mirakui/projects/follotter/follotter-crawler/log/crawler.log'},
 ]
 
 MESSAGE_FORMATS = [
