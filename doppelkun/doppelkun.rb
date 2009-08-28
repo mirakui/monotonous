@@ -19,6 +19,22 @@ $reply_since_id_file = Gena::FileDB.new 'tmp/reply_since_id', :base=>__FILE__
 $log = Logger.new(File.join(BASE_DIR, 'log', 'doppelkun.log'), 'daily')
 $log.level = $DEBUG ? Logger::DEBUG : Logger::INFO
 
+def retry_on(retry_count_max, sleep_time=1)
+  retry_count = 0
+  begin
+    yield
+  rescue => e
+    if retry_count < retry_count_max
+      retry_count += 1
+      $log.warn "Retry [#{retry_count}/#{retry_count_max}]: #{e.inspect}"
+      sleep sleep_time
+      retry
+    else
+      raise e
+    end
+  end
+end
+
 def retarget(tw, target=nil)
   $log.info('begin retarget')
 
@@ -149,24 +165,19 @@ begin
 
   retry_count = 3
   pit = nil
-  begin
+  retry_on(3) do
     $log.info "trying to load a pit (left #{retry_count})"
     pit = Pit.get(
       ($DEBUG ? 'doppelkun_debug' : 'doppelkun'),
       :require=>{'login'=>'','password'=>''}
     )
-  rescue
-    if (retry_count-=1)>0
-      $log.warn "retry until a sleep"
-      sleep 3
-      retry
-    end
-    $log.error "failed to load a pit"
-    exit 1
   end
   $log.debug "pit loaded #{pit['login']}"
 
-  tw = Twitter::Client.new pit
+  tw = nil
+  retry_on(3) do
+    tw = Twitter::Client.new pit
+  end
 
   case task
   when 'retarget'
@@ -176,8 +187,11 @@ begin
   else
     mirror_post(tw)
   end
+rescue StandardError => e
+  $log.error [e.class.to_s, e.to_s, e.backtrace].flatten.join("\n\t")
+  exit 1
 rescue Object => e
-  $log.error "#{e.class}:#{e.to_str} -- #{e.backtrace}"
+  $log.error "#{e.class}:#{e.to_s}"
   exit 1
 end
 
