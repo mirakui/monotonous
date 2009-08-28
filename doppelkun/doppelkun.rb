@@ -147,10 +147,23 @@ end
 begin
   task  = ARGV.shift
 
-  pit = Pit.get(
-    ($DEBUG ? 'doppelkun_debug' : 'doppelkun'),
-    :require=>{'login'=>'','password'=>''}
-  )
+  retry_count = 3
+  pit = nil
+  begin
+    $log.info "trying to load a pit (left #{retry_count})"
+    pit = Pit.get(
+      ($DEBUG ? 'doppelkun_debug' : 'doppelkun'),
+      :require=>{'login'=>'','password'=>''}
+    )
+  rescue
+    if (retry_count-=1)>0
+      $log.warn "retry until a sleep"
+      sleep 3
+      retry
+    end
+    $log.error "failed to load a pit"
+    exit 1
+  end
   $log.debug "pit loaded #{pit['login']}"
 
   tw = Twitter::Client.new pit
@@ -165,6 +178,7 @@ begin
   end
 rescue Object => e
   $log.error "#{e.class}:#{e.to_str} -- #{e.backtrace}"
+  exit 1
 end
 
 __END__
