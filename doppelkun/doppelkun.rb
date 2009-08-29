@@ -88,7 +88,9 @@ def mirror_post(tw)
       last_id = t.id
       #text = URI.escape(t.text.delete('@'), /[&]/)
       text = t.text
-      tw.status :post, text
+      retry_on(3) do
+        tw.status :post, text
+      end
       $log.debug "poted='#{text}"
       $since_id_file.write last_id
       $log.info "wrote since_id #{last_id}"
@@ -109,8 +111,10 @@ def forward_replies(tw)
   auth = [tw.send(:login), tw.send(:password)]
   reply_since_id = $reply_since_id_file.read
   rss = ''
-  open(reply_uri, :http_basic_authentication=>auth) do |f|
-    rss = f.read
+  retry_on(3) do
+    open(reply_uri, :http_basic_authentication=>auth) do |f|
+      rss = f.read
+    end
   end
   first = true
   h = Hpricot(rss)
