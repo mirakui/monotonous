@@ -1,8 +1,8 @@
+# vim:fileencodings=utf-8
 require 'rubygems'
 require 'json'
 require 'pp'
 require 'time'
-#$KCODE = 'u'
 
 LOG_DIR = File.join(File.dirname(__FILE__), '..', 'log')
 PAGE_FROM = 1

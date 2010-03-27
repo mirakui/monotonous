@@ -1,10 +1,9 @@
+# vim:fileencoding=utf-8
 BASE_DIR = File.join(File.dirname(__FILE__), '..')
 $: << BASE_DIR
 
 require 'conf/conf'
 require 'lib/twitter_bot_base'
-
-require 'rubygems'
 require 'lib/loggable'
 
 class MirakuiMetro < Gena::TwitterBotBase
@@ -39,7 +38,7 @@ class MirakuiMetro < Gena::TwitterBotBase
     end
 
     schedules.each do |s|
-      status = s.status.gsub('@', '')
+      status = s.status.gsub('@', '').gsub('#', '＃')
       if status.nil? || status.length.zero?
         logger.warn "status was empty: id=#{s.id}"
         next

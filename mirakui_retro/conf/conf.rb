@@ -28,7 +28,7 @@ class Var < ActiveRecord::Base
   end
 
   def self.[]=(key, value)
-    var = self.find :first, :conditions => { :key => key.to_s }
+    var = self.find(:first, :conditions => { :key => key.to_s })|| Var.new(:key => key.to_s)
     var.value = value
     var.save
   end
