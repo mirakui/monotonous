@@ -1,12 +1,19 @@
 require 'rubygems'
 require 'active_record'
 require 'pit'
+require 'optparse'
 
 SCHEDULE_OFFSET = 91.days.ago # (4*3+1)weeks = about 3month
 
-$pit = Pit.get(($DEBUG ? 'mirakui_retro_debug' : 'mirakui_retro'), :require => {
+OPTS = OptionParser.getopts('v', 'pit:', 'notweet', 'noprogress')
+OPTS['pit'] ||= 'mirakui_retro'
+
+$pit = Pit.get(OPTS['pit'], :require => {
   'login' => 'mirakui_retro',
-  'password' => ''
+  'consumer_key' => '',
+  'consumer_secret' => '',
+  'access_token' => '',
+  'access_secret' => ''
 })
 
 base_dir = File.join(File.dirname(__FILE__), '..')

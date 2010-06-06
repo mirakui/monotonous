@@ -1,7 +1,7 @@
 #!/bin/bash
 export LANG=ja_JP.UTF-8
 TODAY=`/bin/date +%F`
-RUBY=/usr/local/bin/ruby1.9
+RUBY=`/usr/bin/env ruby`
 BASE_DIR=/home/mirakui/projects/monotonous/mirakui_retro
 BIN_DIR=${BASE_DIR}/bin
 LOG_DIR=${BASE_DIR}/log

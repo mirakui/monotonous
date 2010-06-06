@@ -1,20 +1,15 @@
 # vim:fileencoding=utf-8
 
-pattern_regexp /掃除せな/,
+on_reply /hi/,
 do |status|
-  pp 'Hello,World'
+  msg = 'はい'
+  reply_to status, msg
 end
 
-pattern_regexp /掃除せな/,
+on_reply /今日.*何日/,
 do |status|
-  pp 'Hello,World2'
-end
-
-pattern_regexp /今日.*何日/,
-do |status|
-  msg = "@#{status['user']['screen_name']} "
-  msg += ['え？ ',''].sample
+  msg = ['え？ ',''].sample
   msg += SCHEDULE_OFFSET.to_s
   msg += ['だけど…', 'です', 'すわ'].sample
-  pp msg
+  reply_to status, msg
 end
