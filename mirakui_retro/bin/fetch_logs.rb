@@ -21,7 +21,8 @@ pit = Pit.get 'follotter'
 
   retry_count = 0
   begin
-    open(uri, :http_basic_authentication => [ pit['username'], pit['password'] ]) do |r| 
+    #open(uri, :http_basic_authentication => [ pit['username'], pit['password'] ]) do |r| 
+    open(uri) do |r| 
       open(path, 'w') do |f|
         f.write(r.read)
       end

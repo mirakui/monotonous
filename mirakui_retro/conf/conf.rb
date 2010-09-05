@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'active_record'
+require 'active_support/core_ext'
 require 'pit'
 require 'optparse'
 

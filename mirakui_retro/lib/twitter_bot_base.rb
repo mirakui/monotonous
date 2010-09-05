@@ -22,7 +22,7 @@ module Gena
     end
 
     protected
-    def update(msg, opts)
+    def update(msg, opts={})
       unless @readonly
         twitter.update msg, opts
         logger.info "posted to twitter: #{msg} (#{opts.inspect})"
