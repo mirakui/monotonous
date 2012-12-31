@@ -1,21 +1,16 @@
 require 'rubygems'
 require 'active_record'
 require 'active_support/core_ext'
-require 'pit'
 require 'optparse'
+require 'yaml'
+require 'pathname'
 
 SCHEDULE_OFFSET = 91.days.ago # (4*3+1)weeks = about 3month
 
 OPTS = OptionParser.getopts('v', 'pit:', 'notweet', 'noprogress')
 OPTS['pit'] ||= 'mirakui_retro'
 
-$pit = Pit.get(OPTS['pit'], :require => {
-  'login' => 'mirakui_retro',
-  'consumer_key' => '',
-  'consumer_secret' => '',
-  'access_token' => '',
-  'access_secret' => ''
-})
+$pit = YAML.load Pathname(__FILE__).dirname.join("secret.yml").read
 
 base_dir = File.join(File.dirname(__FILE__), '..')
 ActiveRecord::Base.establish_connection(
