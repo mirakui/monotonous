@@ -5,7 +5,8 @@ require 'optparse'
 require 'yaml'
 require 'pathname'
 
-SCHEDULE_OFFSET = 91.days.ago # (4*3+1)weeks = about 3month
+#SCHEDULE_OFFSET = 91.days.ago # (4*3+1)weeks = about 3month
+SCHEDULE_OFFSET = 1.year.ago
 
 OPTS = OptionParser.getopts('v', 'pit:', 'notweet', 'noprogress')
 OPTS['pit'] ||= 'mirakui_retro'
