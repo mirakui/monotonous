@@ -1,0 +1,6 @@
+source :rubygems
+
+gem 'activerecord', '= 3.2.9'
+gem 'sqlite3'
+gem 'pit'
+gem 'twitter_oauth'
